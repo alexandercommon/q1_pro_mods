@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Decimal, Hex, Binary Converter</h2>
+
+Decimal: <input type="number" id="decimal" oninput="convertFromDecimal(this.value)" value="0"><br>
+Hex: <input type="text" id="hex" oninput="convertFromHex(this.value)" value="0"><br>
+Binary: <input type="text" id="binary" oninput="convertFromBinary(this.value)" value="0"><br>
+Bits: <input type="text" id="bits" disabled><br>
+
+<script>
+let inUpdate = false;
+
+function convertFromDecimal(val) {
+    if (inUpdate) return;
+    inUpdate = true;
+    let decimalVal = parseInt(val, 10);
+    document.getElementById('hex').value = decimalVal.toString(16);
+    let binaryVal = decimalVal.toString(2);
+    document.getElementById('binary').value = binaryVal;
+    document.getElementById('bits').value = binaryVal.length;
+    inUpdate = false;
+}
+
+function convertFromHex(val) {
+    if (inUpdate) return;
+    inUpdate = true;
+    let decimalVal = parseInt(val, 16);
+    document.getElementById('decimal').value = isNaN(decimalVal) ? "" : decimalVal;
+    let binaryVal = isNaN(decimalVal) ? "" : decimalVal.toString(2);
+    document.getElementById('binary').value = binaryVal;
+    document.getElementById('bits').value = binaryVal.length;
+    inUpdate = false;
+}
+
+function convertFromBinary(val) {
+    if (inUpdate) return;
+    inUpdate = true;
+    let decimalVal = parseInt(val, 2);
+    document.getElementById('decimal').value = isNaN(decimalVal) ? "" : decimalVal;
+    document.getElementById('hex').value = isNaN(decimalVal) ? "" : decimalVal.toString(16);
+    document.getElementById('bits').value = val.length;
+    inUpdate = false;
+}
+</script>
+
+</body>
+</html>

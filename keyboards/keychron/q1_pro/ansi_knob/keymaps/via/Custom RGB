@@ -1,0 +1,77 @@
+#include "custom_keycodes.h"
+RGB_MATRIX_EFFECT(PER_KEY_RGB)
+
+// Step 2.
+// Define effects inside the `RGB_MATRIX_CUSTOM_EFFECT_IMPLS` ifdef block
+#ifdef RGB_MATRIX_CUSTOM_EFFECT_IMPLS
+
+// e.g: A simple effect, self-contained within a single method
+bool PER_KEY_RGB(effect_params_t* params) {
+    RGB_MATRIX_USE_LIMITS(led_min, led_max);
+    HSV hsv = rgb_matrix_config.hsv;  // Get the current HSV color
+    for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
+        for (uint8_t col = 0; col < MATRIX_COLS; col++) {
+            if (g_led_config.matrix_co[row][col] >= led_min && g_led_config.matrix_co[row][col] < led_max) {
+                uint16_t keycode = keymap_key_to_keycode(layer_state, (keypos_t){.row = row, .col = col});
+                switch (keycode) {
+                    case KC_LBRC:
+                        hsv.h += 208;
+                        break;
+                    case KC_RBRC:
+                        hsv.h += 188;
+                        break;
+                    case KC_COMM:
+                        hsv.h += 24;
+                        break;
+                    case KC_DOT:
+                        hsv.h += 50;
+                        break;
+                    case KC_SLSH:
+                        hsv.h += 277;
+                        break;
+                    case KC_EQL:
+                        hsv.h += 136;
+                        break;
+                    case KC_MINS:
+                        hsv.h += 352;
+                        break;
+                    case KC_9:
+                        hsv.h += 208;
+                        break;
+                    case KC_0:
+                        hsv.h += 188;
+                        break;
+                    case KC_4:
+                        hsv.h += 129;
+                        break;
+                    case KC_2:
+                        hsv.h += 347;
+                        break;
+                     case KC_RALP:
+                         hsv.h += 347;
+                        break;
+                     case KC_RNUM:
+                         hsv.h += 230;
+                        break;
+                     case KC_RALN:
+                         hsv.h += 282;
+                        break;
+                     case KC_RPAS:
+                         hsv.h += 120;
+                        break;
+                    default:
+                        continue;
+                }
+                hsv.h = hsv.h % 360;  // Ensure the hue stays within the valid range [0, 360)
+                RGB rgb = rgb_matrix_hsv_to_rgb(hsv);  // Convert the HSV color back to RGB
+                RGB_MATRIX_TEST_LED_FLAGS();
+                rgb_matrix_set_color(g_led_config.matrix_co[row][col], rgb.r, rgb.g, rgb.b);
+            }
+        }
+    }
+    return rgb_matrix_check_finished_leds(led_max);
+}
+
+
+#endif // RGB_MATRIX_CUSTOM_EFFECT_IMPLS
+

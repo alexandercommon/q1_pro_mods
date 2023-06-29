@@ -1,0 +1,68 @@
+on:
+  workflow_dispatch:
+
+name: Release
+
+jobs:
+  build:
+    name: Build and release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get current date
+        id: date
+        run: echo "date=$(TZ='America/Detroit' date +'%Y.%m.%d.%H%M%S')" >> "$GITHUB_OUTPUT"
+
+        
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install QMK
+        run: |
+          python3 -m pip install qmk && echo OK install qmk with python || echo FAIL install qmk with python
+          echo "PATH=$PATH:$HOME/.local/bin" >> ~/.bashrc && echo OK set qmk path || echo FAIL set qmk path
+
+
+      - name: Make subs
+        run: |
+          make git-submodule && echo OK subs || echo FAIL subs
+
+      - name: Run install script
+        run: |
+          util/qmk_install.sh && echo OK install || echo FAIL install
+
+
+      - name: Run setup command
+        run: |
+          qmk setup -H . && echo OK setup || echo FAIL setup
+
+      - name: Build firmware
+        id: build
+        run: |
+          make keychron/q1_pro/ansi_knob:via && echo OK build || echo FAIL build
+          mv keychron_q1_pro_ansi_knob_via.bin rel-${{ steps.date.outputs.date }}.bin
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+          ls -l *.bin
+
+      - name: Create Release
+        if: steps.build.outputs.exit_code == 0
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.date.outputs.date }}
+          release_name: ${{ steps.date.outputs.date }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        if: steps.build.outputs.exit_code == 0
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./rel-${{ steps.date.outputs.date }}.bin
+          asset_name: rel-${{ steps.date.outputs.date }}.bin
+          asset_content_type: application/octet-stream
