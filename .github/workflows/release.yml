@@ -16,29 +16,37 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Chmod code
+        run: |
+          chmod -R 755 .
+
+      - name: Install reqs
+        run: |
+          python3 -m pip install -r ~/qmk_firmware/requirements.txt && exit 0 || exit 1
+
       - name: Install QMK
         run: |
-          python3 -m pip install qmk && echo OK install qmk with python || echo FAIL install qmk with python
-          echo "PATH=$PATH:$HOME/.local/bin" >> ~/.bashrc && echo OK set qmk path || echo FAIL set qmk path
+          python3 -m pip install qmk && exit 0 || exit 1
+          echo "PATH=$PATH:$HOME/.local/bin" >> ~/.bashrc && exit 0 || exit 1
 
 
       - name: Make subs
         run: |
-          make git-submodule && echo OK subs || echo FAIL subs
+          make git-submodule && exit 0 || exit 1
 
       - name: Run install script
         run: |
-          util/qmk_install.sh && echo OK install || echo FAIL install
+          util/qmk_install.sh && exit 0 || exit 1
 
 
       - name: Run setup command
         run: |
-          qmk setup -H . && echo OK setup || echo FAIL setup
+          qmk setup -H . && exit 0 || exit 1
 
       - name: Build firmware
         id: build
         run: |
-          make keychron/q1_pro/ansi_knob:via && echo OK build || echo FAIL build
+          make keychron/q1_pro/ansi_knob:via && exit 0 || exit 1
           mv keychron_q1_pro_ansi_knob_via.bin rel-${{ steps.date.outputs.date }}.bin
           echo "exit_code=$?" >> "$GITHUB_OUTPUT"
           ls -l *.bin
