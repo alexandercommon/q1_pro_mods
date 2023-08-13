@@ -14,7 +14,12 @@ jobs:
 
         
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        
+      - name: Chmod 
+        run: |
+          python3 -m pip install qmk && echo OK install qmk with python || echo FAIL install qmk with python
+          echo "PATH=$PATH:$HOME/.local/bin" >> ~/.bashrc && echo OK set qmk path || echo FAIL set qmk path
 
       - name: Install QMK
         run: |
