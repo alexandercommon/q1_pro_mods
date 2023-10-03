@@ -15,11 +15,6 @@ jobs:
         
       - name: Checkout code
         uses: actions/checkout@v3
-        
-      - name: Chmod 
-        run: |
-          python3 -m pip install qmk && echo OK install qmk with python || echo FAIL install qmk with python
-          echo "PATH=$PATH:$HOME/.local/bin" >> ~/.bashrc && echo OK set qmk path || echo FAIL set qmk path
 
       - name: Install QMK
         run: |
@@ -30,6 +25,10 @@ jobs:
       - name: Make subs
         run: |
           make git-submodule && echo OK subs || echo FAIL subs
+
+      - name: Chmod folder
+        run: |
+          chmod -R 755 *
 
       - name: Run install script
         run: |
