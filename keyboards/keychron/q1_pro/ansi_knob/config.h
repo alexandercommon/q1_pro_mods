@@ -32,7 +32,7 @@
 #    define RGB_MATRIX_LED_COUNT (DRIVER_1_LED_COUNT + DRIVER_2_LED_COUNT)
 
 /* Set to infinit, which is use in USB mode by default */
-#    define RGB_MATRIX_TIMEOUT 120000
+#    define RGB_MATRIX_TIMEOUT 10000
 
 /* Allow shutdown of led driver to save power */
 #    define RGB_MATRIX_DRIVER_SHUTDOWN_ENABLE
