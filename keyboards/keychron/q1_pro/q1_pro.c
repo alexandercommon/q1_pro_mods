@@ -191,13 +191,47 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
-void type_with_random_delay(const char *input_str) {
-    char str[2] = {0}; 
-    while (*input_str != '\0') {
-        str[0] = *input_str; 
-        uint8_t delay = rand() % 300 + 2; 
-        send_string_with_delay(str, delay);
-        input_str++;
+void type_with_random_delay(const char *string, uint8_t max_delay) {
+    while (1) {
+        char ascii_code = *string;
+        if (!ascii_code) break;
+        if (ascii_code == SS_QMK_PREFIX) {
+            ascii_code = *(++string);
+            if (ascii_code == SS_TAP_CODE) {
+                // tap
+                uint8_t keycode = *(++string);
+                tap_code(keycode);
+            } else if (ascii_code == SS_DOWN_CODE) {
+                // down
+                uint8_t keycode = *(++string);
+                register_code(keycode);
+            } else if (ascii_code == SS_UP_CODE) {
+                // up
+                uint8_t keycode = *(++string);
+                unregister_code(keycode);
+            } else if (ascii_code == SS_DELAY_CODE) {
+                // delay
+                int     ms      = 0;
+                uint8_t keycode = *(++string);
+                while (isdigit(keycode)) {
+                    ms *= 10;
+                    ms += keycode - '0';
+                    keycode = *(++string);
+                }
+                while (ms--)
+                    wait_ms(1);
+            }
+        } else {
+            send_char(ascii_code);
+        }
+        ++string;
+        // interval
+        {
+			uint8_t ms = rand() % max_delay + 1; 
+            //uint8_t ms = interval;
+            while (ms--)
+                wait_ms(1);
+        }
     }
 }
 
