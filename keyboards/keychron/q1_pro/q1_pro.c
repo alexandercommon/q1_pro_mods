@@ -195,7 +195,7 @@ void type_with_random_delay(const char *input_str) {
     char str[2] = {0}; 
     while (*input_str != '\0') {
         str[0] = *input_str; 
-        uint8_t delay = rand() % 100 + 1; 
+        uint8_t delay = rand() % 300 + 2; 
         send_string_with_delay(str, delay);
         input_str++;
     }
