@@ -191,7 +191,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
-void type_with_random_delay(const char *string, uint8_t max_delay) {
+void type_with_random_delay(const char *string) {
     while (1) {
         char ascii_code = *string;
         if (!ascii_code) break;
@@ -227,7 +227,7 @@ void type_with_random_delay(const char *string, uint8_t max_delay) {
         ++string;
         // interval
         {
-			uint8_t ms = rand() % max_delay + 1; 
+			uint8_t ms = rand() % 300 + 1; 
             //uint8_t ms = interval;
             while (ms--)
                 wait_ms(1);
