@@ -213,7 +213,7 @@ void type_with_random_delay(const char *string) {
                 // delay
                 int     ms      = 0;
                 uint8_t keycode = *(++string);
-                while (isdigit(keycode)) {
+                while (keycode != '\0') {
                     ms *= 10;
                     ms += keycode - '0';
                     keycode = *(++string);
