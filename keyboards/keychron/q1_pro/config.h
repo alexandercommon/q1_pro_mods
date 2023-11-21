@@ -47,7 +47,7 @@
             { 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 }
 
 /* Backlit disable timeout when keyboard is disconnected(unit: second) */
-#        define DISCONNECTED_BACKLIGHT_DISABLE_TIMEOUT 40
+#        define DISCONNECTED_BACKLIGHT_DISABLE_TIMEOUT 10
 
 /* Backlit disable timeout when keyboard is connected(unit: second) */
 #        define CONNECTED_BACKLIGHT_DISABLE_TIMEOUT 600
