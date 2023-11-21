@@ -37,6 +37,7 @@ typedef struct PACKED {
 
 static uint16_t random_key_timer = 0;
 static uint16_t random_speed_ms = 50;
+static uint16_t random_delay = 0;
 static bool ran_alph_held = false;
 static bool ran_num_held = false;
 static bool ran_alpn_held = false;
@@ -200,70 +201,6 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 }
 
 
-void type_with_random_delay(const char *string) {
-    while (1) {
-        char ascii_code = *string;
-        if (!ascii_code) break;
-        send_char(ascii_code);
-        uint8_t delay = rand() % 350 + 100; 
-        ++string;
-		wait_ms(delay);
-    }
-}
-void type_with_random_delay_orig(const char *input_str) {
-    char str[2] = {0}; 
-    while (*input_str != '\0') {
-        str[0] = *input_str; 
-        uint8_t delay = rand() % 350 + 50; 
-        send_string_with_delay(str, delay);
-        input_str++;
-    }
-}
-
-void type_with_random_delay_new(const char *string) {
-    while (1) {
-        char ascii_code = *string;
-        if (!ascii_code) break;
-        if (ascii_code == SS_QMK_PREFIX) {
-            ascii_code = *(++string);
-            if (ascii_code == SS_TAP_CODE) {
-                // tap
-                uint8_t keycode = *(++string);
-                tap_code(keycode);
-            } else if (ascii_code == SS_DOWN_CODE) {
-                // down
-                uint8_t keycode = *(++string);
-                register_code(keycode);
-            } else if (ascii_code == SS_UP_CODE) {
-                // up
-                uint8_t keycode = *(++string);
-                unregister_code(keycode);
-            } else if (ascii_code == SS_DELAY_CODE) {
-                // delay
-                int     ms      = 0;
-                uint8_t keycode = *(++string);
-                while (keycode != '\0') {
-                    ms *= 10;
-                    ms += keycode - '0';
-                    keycode = *(++string);
-                }
-                while (ms--)
-                    wait_ms(1);
-            }
-        } else {
-            send_char(ascii_code);
-        }
-        ++string;
-        // interval
-        {
-			uint8_t ms = rand() % 300 + 1; 
-            //uint8_t ms = interval;
-            while (ms--)
-                wait_ms(1);
-        }
-    }
-}
-
 #ifdef ENCODER_ENABLE
 static void encoder0_pad_cb(void *param) {
     (void)param;
@@ -321,11 +258,11 @@ void matrix_scan_kb(void) {
     char digits[] = "0123456789";
     char symbols[] = "!#$%&()*+,-./:;<=>?";
 	
-    char M0[] = "ThisIsATest123$";
-    char M1[] = "TryThisNow123%";
-    char M2[] = "FinalTest*343";
+    char M0[] = "XRegPasWdX";
+    char M1[] = "XAlexCPasswordX";
+    char M2[] = "XKarmaPasswordX";
 
-    if (print_M0 && timer_elapsed(random_key_timer) > (rand() % 350 + 10)) {
+    if (print_M0 && timer_elapsed(random_key_timer) > random_delay) {
        	random_key_timer = timer_read();
 
     	// Get the current character from the hardcoded string
@@ -343,11 +280,12 @@ void matrix_scan_kb(void) {
     		counter = 0;
     		print_M0 = false;
     		random_key_timer = timer_read();
+			random_delay = 0;
     	}
-
+		random_delay = rand() % 350 + 10);
     }
 	
-    if (print_M1 && timer_elapsed(random_key_timer) > (rand() % 350 + 10)) {
+    if (print_M1 && timer_elapsed(random_key_timer) > random_delay) {
        	random_key_timer = timer_read();
 
     	// Get the current character from the hardcoded string
@@ -366,10 +304,11 @@ void matrix_scan_kb(void) {
     		print_M1 = false;
     		random_key_timer = timer_read();
     	}
+		random_delay = rand() % 350 + 10);
 
     }
 	
-    if (print_M2 && timer_elapsed(random_key_timer) > (rand() % 350 + 10)) {
+    if (print_M2 && timer_elapsed(random_key_timer) > random_delay) {
        	random_key_timer = timer_read();
 
     	// Get the current character from the hardcoded string
@@ -385,9 +324,10 @@ void matrix_scan_kb(void) {
     	// Check if the counter has reached the end of the string
     	if (counter == sizeof(M2)) {
     		counter = 0;
-    		print_M1 = false;
+    		print_M2 = false;
     		random_key_timer = timer_read();
     	}
+		random_delay = rand() % 350 + 10);
 
     }
     
@@ -541,7 +481,6 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
 }
 
 #endif
-
 
 
 
