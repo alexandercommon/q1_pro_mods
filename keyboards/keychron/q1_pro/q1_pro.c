@@ -45,7 +45,6 @@ static bool ran_pass_held = false;
 static bool print_M0 = false;
 static bool print_M1 = false;
 static bool print_M2 = false;
-static char previous_char = '\0';
 static int counter = 0;
 
 key_combination_t key_comb_list[4] = {
