@@ -44,6 +44,7 @@ static bool ran_pass_held = false;
 
 static bool print_M0 = false;
 static char previous_char = '\0';
+static int counter = 0;
 
 key_combination_t key_comb_list[4] = {
     {2, {KC_LWIN, KC_TAB}},        // Task (win)
@@ -321,32 +322,24 @@ void matrix_scan_kb(void) {
     char M0[] = "ThisIsATest123$";
 
     if (print_M0 && timer_elapsed(random_key_timer) > (rand() % 350 + 10)) {
-        random_key_timer = timer_read();
+       	random_key_timer = timer_read();
 
-        // Get the next character from the hardcoded string
-        char current_char = '\0';
-        if (previous_char == '\0') {
-            current_char = M0[0];
-        } else {
-            int index = (int) strchr(M0, previous_char) + 1;
-            if (index != -1) {
-                current_char = M0[index];
-            }
-        }
-
-        // Check if the current character is the null terminator
-        if (current_char == '\0') {
-            // Reached the end of the string, stop iterating
-            print_M0 = false;
-            random_key_timer = timer_read();
-        }
-
-        // Print the current character
-        char char_string[2] = {current_char, '\0'};
-        send_string(char_string);
-
-        // Store the current character as the previous character
-        previous_char = current_char;
+    	// Get the current character from the hardcoded string
+    	char current_char = letters[counter];
+    
+    	// Print the current character
+    	char char_string[2] = {current_char, '\0'};
+    	send_string(char_string);
+    
+    	// Increment the counter
+    	counter++;
+    
+    	// Check if the counter has reached the end of the string
+    	if (counter == sizeof(letters)) {
+    		counter = 0;
+    		print_M0 = false;
+    		random_key_timer = timer_read();
+    	}
 
     }
     
