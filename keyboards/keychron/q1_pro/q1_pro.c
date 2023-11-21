@@ -282,7 +282,7 @@ void matrix_scan_kb(void) {
     		random_key_timer = timer_read();
 			random_delay = 0;
     	}
-		random_delay = rand() % 350 + 10);
+		random_delay = rand() % 350 + 10;
     }
 	
     if (print_M1 && timer_elapsed(random_key_timer) > random_delay) {
@@ -304,7 +304,7 @@ void matrix_scan_kb(void) {
     		print_M1 = false;
     		random_key_timer = timer_read();
     	}
-		random_delay = rand() % 350 + 10);
+		random_delay = rand() % 350 + 10;
 
     }
 	
@@ -327,7 +327,7 @@ void matrix_scan_kb(void) {
     		print_M2 = false;
     		random_key_timer = timer_read();
     	}
-		random_delay = rand() % 350 + 10);
+		random_delay = rand() % 350 + 10;
 
     }
     
