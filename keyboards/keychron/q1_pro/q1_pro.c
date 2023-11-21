@@ -43,6 +43,8 @@ static bool ran_alpn_held = false;
 static bool ran_pass_held = false;
 
 static bool print_M0 = false;
+static bool print_M1 = false;
+static bool print_M2 = false;
 static char previous_char = '\0';
 static int counter = 0;
 
@@ -139,14 +141,15 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
         case MC_0:
             print_M0 = true;
             random_key_timer = timer_read();
-            //send_string("RegPassWrd");
             return false;
-        /*case MC_1:
-            send_string("XAlexCPasswordX");
+        case MC_1:
+            print_M1 = true;
+            random_key_timer = timer_read();
             return false;
         case MC_2:
-            send_string("XKarmaPasswordX");
-            return false;*/
+            print_M2 = true;
+            random_key_timer = timer_read();
+            return false;
         case KC_PSCR: {
             if (get_highest_layer(layer_state | default_layer_state) == 0) {
                 static bool ss3_reg;
@@ -320,12 +323,14 @@ void matrix_scan_kb(void) {
     char symbols[] = "!#$%&()*+,-./:;<=>?";
 	
     char M0[] = "ThisIsATest123$";
+    char M1[] = "TryThisNow123%";
+    char M2[] = "FinalTest*343";
 
     if (print_M0 && timer_elapsed(random_key_timer) > (rand() % 350 + 10)) {
        	random_key_timer = timer_read();
 
     	// Get the current character from the hardcoded string
-    	char current_char = letters[counter];
+    	char current_char = M0[counter];
     
     	// Print the current character
     	char char_string[2] = {current_char, '\0'};
@@ -335,9 +340,53 @@ void matrix_scan_kb(void) {
     	counter++;
     
     	// Check if the counter has reached the end of the string
-    	if (counter == sizeof(letters)) {
+    	if (counter == sizeof(M0)) {
     		counter = 0;
     		print_M0 = false;
+    		random_key_timer = timer_read();
+    	}
+
+    }
+	
+    if (print_M1 && timer_elapsed(random_key_timer) > (rand() % 350 + 10)) {
+       	random_key_timer = timer_read();
+
+    	// Get the current character from the hardcoded string
+    	char current_char = M1[counter];
+    
+    	// Print the current character
+    	char char_string[2] = {current_char, '\0'};
+    	send_string(char_string);
+    
+    	// Increment the counter
+    	counter++;
+    
+    	// Check if the counter has reached the end of the string
+    	if (counter == sizeof(M1)) {
+    		counter = 0;
+    		print_M1 = false;
+    		random_key_timer = timer_read();
+    	}
+
+    }
+	
+    if (print_M2 && timer_elapsed(random_key_timer) > (rand() % 350 + 10)) {
+       	random_key_timer = timer_read();
+
+    	// Get the current character from the hardcoded string
+    	char current_char = M2[counter];
+    
+    	// Print the current character
+    	char char_string[2] = {current_char, '\0'};
+    	send_string(char_string);
+    
+    	// Increment the counter
+    	counter++;
+    
+    	// Check if the counter has reached the end of the string
+    	if (counter == sizeof(M2)) {
+    		counter = 0;
+    		print_M1 = false;
     		random_key_timer = timer_read();
     	}
 
