@@ -328,7 +328,7 @@ void matrix_scan_kb(void) {
         if (previous_char == '\0') {
             current_char = M0[0];
         } else {
-            int index = strchr(M0, previous_char) + 1;
+            int index = (int) strchr(M0, previous_char) + 1;
             if (index != -1) {
                 current_char = M0[index];
             }
