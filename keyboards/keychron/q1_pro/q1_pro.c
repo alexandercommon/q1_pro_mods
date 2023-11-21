@@ -192,14 +192,14 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 }
 
 
-void type_with_random_delay(const char *input_str) {
-    char str[2] = {0}; 
-    while (*input_str != '\0') {
-        str[0] = *input_str; 
-        uint8_t delay = rand() % 350 + 50; 
-        tap_code(str);
-        wait_ms(delay);
-        input_str++;
+void type_with_random_delay(const char *string) {
+    while (1) {
+        char ascii_code = *string;
+        if (!ascii_code) break;
+        send_char(ascii_code);
+        uint8_t delay = rand() % 350 + 100; 
+        ++string;
+		wait_ms(delay);
     }
 }
 void type_with_random_delay_orig(const char *input_str) {
