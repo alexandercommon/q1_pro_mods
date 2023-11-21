@@ -42,6 +42,9 @@ static bool ran_num_held = false;
 static bool ran_alpn_held = false;
 static bool ran_pass_held = false;
 
+static bool print_M0 = false;
+static char previous_char = '\0';
+
 key_combination_t key_comb_list[4] = {
     {2, {KC_LWIN, KC_TAB}},        // Task (win)
     {2, {KC_LWIN, KC_E}},          // Files (win)
@@ -132,10 +135,12 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
                 random_key_timer = 0;
             }
             return false;
-        /*case MC_0:
-            send_string("RegPassWrd");
+        case MC_0:
+            print_M0 = true;
+            random_key_timer = timer_read();
+            //send_string("RegPassWrd");
             return false;
-        case MC_1:
+        /*case MC_1:
             send_string("XAlexCPasswordX");
             return false;
         case MC_2:
@@ -312,6 +317,38 @@ void matrix_scan_kb(void) {
     char letters[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     char digits[] = "0123456789";
     char symbols[] = "!#$%&()*+,-./:;<=>?";
+	
+    char M0[] = "ThisIsATest123$";
+
+    if (print_M0 && timer_elapsed(random_key_timer) > (rand() % 350 + 10)) {
+        random_key_timer = timer_read();
+
+        // Get the next character from the hardcoded string
+        char current_char = '\0';
+        if (previous_char == '\0') {
+            current_char = M0[0];
+        } else {
+            int index = strchr(M0, previous_char) + 1;
+            if (index != -1) {
+                current_char = M0[index];
+            }
+        }
+
+        // Check if the current character is the null terminator
+        if (current_char == '\0') {
+            // Reached the end of the string, stop iterating
+            print_M0 = false;
+            random_key_timer = timer_read();
+        }
+
+        // Print the current character
+        char char_string[2] = {current_char, '\0'};
+        send_string(char_string);
+
+        // Store the current character as the previous character
+        previous_char = current_char;
+
+    }
     
     if (ran_alph_held && timer_elapsed(random_key_timer) > random_speed_ms) {
         random_key_timer = timer_read();
