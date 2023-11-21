@@ -197,6 +197,16 @@ void type_with_random_delay(const char *input_str) {
     while (*input_str != '\0') {
         str[0] = *input_str; 
         uint8_t delay = rand() % 350 + 50; 
+        tap_code(str);
+        wait_ms(delay);
+        input_str++;
+    }
+}
+void type_with_random_delay_orig(const char *input_str) {
+    char str[2] = {0}; 
+    while (*input_str != '\0') {
+        str[0] = *input_str; 
+        uint8_t delay = rand() % 350 + 50; 
         send_string_with_delay(str, delay);
         input_str++;
     }
