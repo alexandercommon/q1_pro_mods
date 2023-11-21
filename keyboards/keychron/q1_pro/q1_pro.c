@@ -133,13 +133,13 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
             }
             return false;
         case MC_0:
-            type_with_random_delay("RegPassWrd");
+            send_string("RegPassWrd");
             return false;
         case MC_1:
-            type_with_random_delay("XAlexCPasswordX");
+            send_string("XAlexCPasswordX");
             return false;
         case MC_2:
-            type_with_random_delay("XKarmaPasswordX");
+            send_string("XKarmaPasswordX");
             return false;
         case KC_PSCR: {
             if (get_highest_layer(layer_state | default_layer_state) == 0) {
