@@ -132,7 +132,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
                 random_key_timer = 0;
             }
             return false;
-        case MC_0:
+        /*case MC_0:
             send_string("RegPassWrd");
             return false;
         case MC_1:
@@ -140,7 +140,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
             return false;
         case MC_2:
             send_string("XKarmaPasswordX");
-            return false;
+            return false;*/
         case KC_PSCR: {
             if (get_highest_layer(layer_state | default_layer_state) == 0) {
                 static bool ss3_reg;
