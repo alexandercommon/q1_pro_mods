@@ -63,3 +63,35 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
     [KB_CFG]   = {ENCODER_CCW_CW(RGB_VAD, RGB_VAI)}
 };
 #endif // ENCODER_MAP_ENABLE
+
+// START date print test
+static void put_hex(char *p, uint32_t v) {
+    for (int8_t i = 7; i >= 0; i--) {
+        uint8_t n = v & 0xF;
+        p[i] = n < 10 ? '0' + n : 'A' + (n - 10);
+        v >>= 4;
+    }
+}
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (!record->event.pressed) return true;
+    if (keycode == RTC_SEED) {
+        char h[9] = "00000000";
+        RTC->BKP0R = BKP_MAGIC;
+        RTC->BKP1R = RTC->BKP1R + 1;
+        put_hex(h, RTC->BKP1R);
+        send_string("SEEDED n=");
+        send_string(h);
+        return false;
+    }
+    if (keycode == RTC_STAT) {
+        char h[9] = "00000000";
+        put_hex(h, RTC->BKP1R);
+        send_string(RTC->BKP0R == BKP_MAGIC ? "SURVIVED n=" : "LOST n=");
+        send_string(h);
+        send_string(RTC->ISR & RTC_ISR_INITS ? " INITS=1" : " INITS=0");
+        return false;
+    }
+    return true;
+}
+
+// END date print test
