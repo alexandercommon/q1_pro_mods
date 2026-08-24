@@ -9,9 +9,6 @@ enum layers{
   KB_CFG
 };
 
-#define BKP_MAGIC 0x4B444154UL
-enum custom_keycodes { RTC_SEED = QK_KB_0, RTC_STAT };
-
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [MAC_BASE] = LAYOUT_ansi_82(
         LT(KB_CFG, KC_ESC),
@@ -52,7 +49,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TRNS,  BT_HST1,  BT_HST2,  BT_HST3,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,            DB_TOGG,
         RGB_TOG,  RGB_MOD,  RGB_HUI,  RGB_SAI,  RGB_VAI,  RGB_SPI,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,            KC_TRNS,
         KC_TRNS,  RGB_RMOD, RGB_HUD,  RGB_SAD,  RGB_VAD,  RGB_SPD,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,            KC_TRNS,            KC_TRNS,
-        KC_TRNS,            RTC_SEED, RTC_STAT, KC_TRNS,  KC_TRNS,  BAT_LVL,  NK_TOGG,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,            KC_TRNS,  KC_TRNS,
+        KC_TRNS,            KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  BAT_LVL,  NK_TOGG,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,            KC_TRNS,  KC_TRNS,
         KC_TRNS,  KC_TRNS,  KC_TRNS,                                KC_TRNS,                                KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS)
 		
 };
@@ -66,35 +63,3 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
     [KB_CFG]   = {ENCODER_CCW_CW(RGB_VAD, RGB_VAI)}
 };
 #endif // ENCODER_MAP_ENABLE
-
-// START date print test
-static void put_hex(char *p, uint32_t v) {
-    for (int8_t i = 7; i >= 0; i--) {
-        uint8_t n = v & 0xF;
-        p[i] = n < 10 ? '0' + n : 'A' + (n - 10);
-        v >>= 4;
-    }
-}
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (!record->event.pressed) return true;
-    if (keycode == RTC_SEED) {
-        char h[9] = "00000000";
-        RTC->BKP0R = BKP_MAGIC;
-        RTC->BKP1R = RTC->BKP1R + 1;
-        put_hex(h, RTC->BKP1R);
-        send_string("SEEDED n=");
-        send_string(h);
-        return false;
-    }
-    if (keycode == RTC_STAT) {
-        char h[9] = "00000000";
-        put_hex(h, RTC->BKP1R);
-        send_string(RTC->BKP0R == BKP_MAGIC ? "SURVIVED n=" : "LOST n=");
-        send_string(h);
-        send_string(RTC->ISR & RTC_ISR_INITS ? " INITS=1" : " INITS=0");
-        return false;
-    }
-    return true;
-}
-
-// END date print test
